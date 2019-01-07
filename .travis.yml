@@ -5,15 +5,40 @@ python-setup-steps: &python-setup-steps
     - pipenv install --dev
     - sudo apt-get install ninja-build
 
+windows-setup-steps: &windows-setup-steps
+  os: windows
+  language: cpp  #Python is not yet supported on Windows
+  install:
+    - choco install python2
+    - py -m pip install pipenv
+    - py -m pipenv install --dev
+
 matrix:
   include:
-    - name: "test with ninja on python 2.7"
+    - name: "Linux: test with ninja on python 2.7"
+      os: linux
       python: '2.7'
       compiler: clang
       <<: *python-setup-steps
       script: pipenv run -v test -f ninja
 
-    - name: "test with make on python 2.7"
+    - name: "osx: test with ninja on python 2.7"
+      os: osx
+      osx_image: xcode9.3
+      python: '2.7'
+      compiler: clang
+      <<: *python-setup-steps
+      script: pipenv run -v test -f ninja
+
+    - name: "Windows: test with ninja on python 2.7"
+      <<: *windows-setup-steps
+      script: pipenv run -v test -f ninja
+
+    - name: "Windows: test with make on python 2.7"
+      <<: *windows-setup-steps
+      script: pipenv run -v test -f make
+
+    - name: "Linux: test with make on python 2.7"
       python: '2.7'
       compiler: clang
       <<: *python-setup-steps
@@ -38,19 +63,11 @@ matrix:
         - shellcheck-stable/shellcheck --version  # Current is v0.6.0
       script: bash -c 'shopt -s globstar ; shellcheck-stable/shellcheck **/*.{sh,ksh,bash}'
 
-    - name: "test with make on windows"
-      os: windows
-      language: node_js  # 'python' is not yet supported
-      install:
-        - choco install python
-        - py -m pip install pipenv
-        - py -m pipenv install --dev
-      script:
-        - py -m flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
-        - py -m pipenv run -v test -f make
   allow_failures:
     - os: windows
     - language: shell
+    - os: osx
+    - os: windows
 
 notifications:
   slack: node4good:C2EI9vo04FY8Ce5u7kcOLlDw
