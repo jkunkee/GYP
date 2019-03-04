@@ -821,6 +821,7 @@ def FindVisualStudioInstallation():
         r'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe',
         '-latest', '-products', '*', '-prerelease', '-format', 'json',
         '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64',
+        '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.ARM64',
       ]
       vswhere_json = subprocess.check_output(args1)
       top_vs_info = json.loads(vswhere_json)[0]
