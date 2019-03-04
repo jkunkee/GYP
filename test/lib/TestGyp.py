@@ -1025,6 +1025,8 @@ class TestGypMSVS(TestGypOnMSToolchain):
         arguments.extend(['/Project', target])
       if self.configuration:
         arguments.extend(['/ProjectConfig', self.configuration])
+    #arguments.extend(['/binaryLogger:foo.binlog', '/fileLogger1', '/fileLoggerParameters1:Verbosity=diagnostic;LogFile=foo.log'])
+    arguments.extend(['/consoleLoggerParameters:NoSummary'])
     kw['arguments'] = arguments
     return self.run(program=self.build_tool, **kw)
   def up_to_date(self, gyp_file, target=None, **kw):
